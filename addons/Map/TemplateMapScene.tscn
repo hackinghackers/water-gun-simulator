@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://oj3blpxqf1bl"]
 
-[ext_resource type="PackedScene" uid="uid://bwggrf7sbmkcv" path="res://Godot-Simple-State-Machine-First-Person-Controller/addons/PlayerCharacter/PlayerCharacterScene.tscn" id="1_oh4cu"]
-[ext_resource type="Material" uid="uid://cmlreoo2qwhp4" path="res://Godot-Simple-State-Machine-First-Person-Controller/addons/Arts/StructureMaterial.tres" id="2_etmyc"]
+[ext_resource type="PackedScene" uid="uid://bwggrf7sbmkcv" path="res://addons/PlayerCharacter/PlayerCharacterScene.tscn" id="1_oh4cu"]
+[ext_resource type="Material" uid="uid://cmlreoo2qwhp4" path="res://addons/Arts/StructureMaterial.tres" id="2_etmyc"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_fjbi6"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
