@@ -15,9 +15,9 @@ run/main_scene="uid://s5pobunw80jf"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
 
-[dotnet]
+[debug]
 
-project/assembly_name="Water Gun Simulator"
+gdscript/warnings/untyped_declaration=1
 
 [editor_plugins]
 
