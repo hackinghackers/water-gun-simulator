@@ -7,5 +7,5 @@ requires-python = ">=3.11"
 dependencies = [
     "dataclasses-json>=0.6.7",
     "fastapi>=0.115.12",
-    "uvicorn>=0.34.2",
+    "uvicorn[standard]>=0.34.2",
 ]

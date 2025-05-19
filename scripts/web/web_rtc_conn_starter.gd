@@ -142,7 +142,7 @@ func _ensure_connection(from_pid: int) -> WebRTCPeerConnection:
 	if connections.has(from_pid):
 		return connections[from_pid]
 
-	var pc = WebRTCPeerConnection.new()
+	var pc  = WebRTCPeerConnection.new()
 	add_child(pc)
 
 	# Bind peer_id (remote) so our handlers know the target directly

@@ -28,5 +28,5 @@ func _enter_tree() -> void:
 	print("type string: " + type_string(typeof(test_class)))
 	print("JSON.stringify: " + JSON.stringify(test_class))
 	print("JSON.stringify: " + JSON.stringify(test_dict))
-	print("JsonCC: " + JSON.stringify(JsonCC.class_to_json(test_class)))
+	print("JsonCC: " + JsonCC.class_to_json_string(test_class))
 	#print("JsonCC: " + JsonCC.class_to_json_string(test_dict))

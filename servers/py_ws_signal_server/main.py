@@ -7,14 +7,13 @@ from events import (
     IceEvent,
 )
 
-from typing import Dict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 @dataclass
 class GameRoom: 
     code : str
     next_pid : int = 1 
-    sockets : Dict[int, WebSocket] = {}
+    sockets : dict[int, WebSocket] = field(default_factory=dict)
 
     def get_client(self, pid : int) -> WebSocket:
         return self.sockets[pid]
@@ -25,7 +24,7 @@ class GameRoom:
         return self.next_pid - 1
 
 app = FastAPI()
-rooms : Dict[str, GameRoom] = {}
+rooms : dict[str, GameRoom] = {}
 
 
 @app.websocket("/ws/{room_code}")
@@ -42,7 +41,7 @@ async def signaling(ws: WebSocket, room_code: str):
 
     # 3) Send back a JoinResponse so the client knows its own ID
     join_resp = JoinResponse(
-        from_pid=0,  # server’s “ID”
+        from_pid=0, 
         to_pid=my_pid,
         room_code=room_code,
     )
