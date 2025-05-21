@@ -85,4 +85,4 @@ async def signaling(ws: WebSocket, room_code: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host='localhost', port=1145, lifespan='on', ws='websockets')
+    uvicorn.run(app, host='localhost', port=1145, lifespan='on', ws='wsproto')

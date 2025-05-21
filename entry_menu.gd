@@ -3,13 +3,14 @@ extends Node
 @onready var connection_menu = $"CanvasLayer/ConnectionMenu"
 @onready var ip_entry = $"CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer/IpEntry"
 @onready var port_entry = $"CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer/PortEntry"
+@onready var room_code_entry = $"CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer/RoomCodeEntry"
 @onready var join_button = $"CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer/JoinButton"
 var default_map = preload("res://addons/Map/TemplateMapScene.tscn").instantiate()
 const PlayerType := preload("res://addons/PlayerCharacter/PlayerCharacterScene.tscn") 
 var webRTCCon : WebRTCConStarter
-var ip_addr : String
-var room_code : String
-var port : int
+var ip_addr : String = 'localhost'
+var room_code : String = 'room'
+var port : int = 1145
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -22,8 +23,8 @@ func _process(delta: float) -> void:
 	pass
 
 func _on_join_button_pressed() -> void:
-	ip_addr = ip_entry.text
-	room_code = port_entry.text
+	#ip_addr = ip_entry.text
+	#room_code = room_code_entry.text
 
 	var url : String = "ws://%s:%d/ws" % [ip_addr, port]
 	print("connecting to websocket: " + url)

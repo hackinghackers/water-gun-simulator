@@ -21,7 +21,11 @@ class SignalEvent:
 	@export var to_pid:     int  # which peer should receive it
 	@export var room_code:  String
 
-	func _init(_event_name: String, _from_pid: int, _to_pid: int, _room_code: String) -> void:
+	func _init(_event_name: String = '',
+			   _from_pid: int = -1, 
+			   _to_pid: int = -1, 
+			   _room_code: String = '') -> void:
+		# providing default values for serializer
 		generated_t = utils.get_millis()
 		event_name  = _event_name
 		from_pid    = _from_pid
@@ -32,7 +36,7 @@ class SignalEvent:
 # Request to join a room. Server will reply with a JoinResponse.
 #
 class JoinRequest extends SignalEvent:
-	func _init(_room_code: String) -> void:
+	func _init(_room_code: String = '') -> void:
 		# from_pid and to_pid unknown until server assigns us
 		super._init("join", -1, -1, _room_code)
 
@@ -40,7 +44,9 @@ class JoinRequest extends SignalEvent:
 # Server’s response carrying our assigned peer ID.
 #
 class JoinResponse extends SignalEvent:
-	func _init(_from_pid: int, _to_pid: int, _room_code: String) -> void:
+	func _init(_from_pid: int = -1,
+			   _to_pid: int = -1, 
+			   _room_code: String = '') -> void:
 		super._init("join_response", _from_pid, _to_pid, _room_code)
 
 #
@@ -50,7 +56,11 @@ class SdpEvent extends SignalEvent:
 	@export var sdp_type:    String
 	@export var sdp_content: String
 
-	func _init(_from_pid: int, _to_pid: int, _room_code: String, _sdp_type: String, _sdp_content: String) -> void:
+	func _init(_from_pid: int = -1, 
+			  _to_pid: int = -1, 
+			  _room_code: String = '',
+			  _sdp_type: String = '',
+			  _sdp_content: String = '') -> void:
 		super._init("sdp", _from_pid, _to_pid, _room_code)
 		sdp_type    = _sdp_type
 		sdp_content = _sdp_content
@@ -63,7 +73,12 @@ class IceEvent extends SignalEvent:
 	@export var ice_index: int
 	@export var ice_name:  String
 
-	func _init(_from_pid: int, _to_pid: int, _room_code: String, _ice_media: String, _ice_index: int, _ice_name: String) -> void:
+	func _init(_from_pid: int = -1,
+			   _to_pid: int = -1,
+			   _room_code: String = '', 
+			   _ice_media: String = '', 
+			   _ice_index: int = -1, 
+			   _ice_name: String = '') -> void:
 		super._init("ice", _from_pid, _to_pid, _room_code)
 		ice_media = _ice_media
 		ice_index = _ice_index
@@ -101,7 +116,6 @@ func _on_signaling_msg(raw: String) -> void:
 		# ev.to_pid is our assigned ID
 		own_peer_id = ev.to_pid
 		multi_peer.create_mesh(own_peer_id)
-		get_tree().multiplayer.multiplayer_peer = multi_peer
 		return
 
 	# 2) Until we know own_peer_id, ignore SDP/ICE

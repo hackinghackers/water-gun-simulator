@@ -24,7 +24,7 @@ func _ready() -> void:
 		set_process(false)
 	else:
 		set_process(true)
-		await get_tree().create_timer(1).timeout
+		await get_tree().create_timer(2).timeout
 
 func _process(delta: float) -> void:
 	# Poll drives internal state and triggers incoming data
