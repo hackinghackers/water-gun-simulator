@@ -6,14 +6,15 @@ var room_code: String
 
 var socket: WebSocketPeer
 
+signal socket_opened
 
 func _init(_server_url: String, _room_code: String) -> void:
 	server_url = _server_url
 	room_code  = _room_code
+	socket = WebSocketPeer.new()
 
 func _ready() -> void:
 	# Instantiate the WebSocket client
-	socket = WebSocketPeer.new()
 
 	# Attempt connection to server_url/room_code
 	var url : String = "%s/%s" % [server_url, room_code]
@@ -23,6 +24,7 @@ func _ready() -> void:
 		set_process(false)
 	else:
 		set_process(true)
+		await get_tree().create_timer(1).timeout
 
 func _process(delta: float) -> void:
 	# Poll drives internal state and triggers incoming data
@@ -31,6 +33,7 @@ func _process(delta: float) -> void:
 
 	if state == WebSocketPeer.STATE_OPEN:
 		# Handle all pending messages
+		socket_opened.emit()
 		while socket.get_available_packet_count() > 0:
 			var pkt : PackedByteArray = socket.get_packet()
 			var msg : String = pkt.get_string_from_utf8()

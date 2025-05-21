@@ -79,6 +79,7 @@ func _init(_signaling : SignalServerCommunicator, _room_code) -> void:
 	multi_peer = WebRTCMultiplayerPeer.new()
 	# Send the join request; server will reply with our peer_id
 	var req = JoinRequest.new(room_code)
+	await signaling.socket_opened
 	signaling.send(JsonCC.class_to_json_string(req))
 
 #
@@ -90,7 +91,7 @@ func _on_signaling_msg(raw: String) -> void:
 		push_error("Invalid JSON from signaling: " + raw)
 		return
 
-	var d  = json.result as Dictionary
+	var d  = json.data as Dictionary
 	var ev = _parse_event(d)
 	if ev == null:
 		return

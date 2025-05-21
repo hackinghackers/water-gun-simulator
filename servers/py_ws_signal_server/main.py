@@ -1,4 +1,6 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from contextlib import asynccontextmanager
+import logging
 from events import (
     SignalEvent,
     JoinRequest,
@@ -8,6 +10,20 @@ from events import (
 )
 
 from dataclasses import dataclass, field
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global logger
+    logger = logging.getLogger("uvicorn.access")
+    logger.handlers.clear()
+    handler = logging.StreamHandler()
+    # handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+    logger.addHandler(handler)
+    logger.info("Server startup complete — logging configured")
+    yield
+    logger.info("Server shutdown complete")
+
 
 @dataclass
 class GameRoom: 
@@ -23,7 +39,7 @@ class GameRoom:
         self.next_pid += 1
         return self.next_pid - 1
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 rooms : dict[str, GameRoom] = {}
 
 
@@ -46,7 +62,7 @@ async def signaling(ws: WebSocket, room_code: str):
         room_code=room_code,
     )
     await ws.send_text(join_resp.to_json())
-
+    logger.info(f"Client {my_pid} joined room {room_code}")
     try:
         # 4) Main loop: receive any event and route it
         while True:
@@ -56,10 +72,17 @@ async def signaling(ws: WebSocket, room_code: str):
             # Only forward if the target is connected
             if target in room.sockets:
                 await room.get_client(target).send_json(msg)
+                logger.info(f"Forwarding message from {my_pid} to {target}: {msg}")
 
     except WebSocketDisconnect:
         # 5) Cleanup on disconnect
+        logger.info(f"Client {my_pid} disconnected from room {room_code}")
         del room.sockets[my_pid]
         if not room.sockets:
             # Optionally delete empty rooms
             del rooms[room_code]
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host='localhost', port=1145, lifespan='on', ws='websockets')
