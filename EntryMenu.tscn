@@ -53,7 +53,7 @@ alignment = 1
 
 [node name="PortEntry" type="LineEdit" parent="CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
-placeholder_text = "Enter the portof the signaling server here"
+placeholder_text = "Enter the room code here"
 alignment = 1
 
 [connection signal="pressed" from="CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]

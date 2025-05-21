@@ -1,11 +1,9 @@
-# WebRTCConStarter_.gd
-extends Node
-class_name WebRTCConStarter
+class_name WebRTCConStarter extends Node
 
 # Preload the JsonClassConverter addon
 const JsonCC = preload("res://addons/JsonClassConverter/JsonClassConverter.gd")
 
-@export var room_code: String = "default_room"
+var room_code: String
 
 var signaling: SignalServerCommunicator
 var multi_peer: WebRTCMultiplayerPeer
@@ -72,13 +70,13 @@ class IceEvent extends SignalEvent:
 		ice_name  = _ice_name
 
 #
-func init() -> void:
-	signaling = SignalServerCommunicator.new()
+func _init(_signaling : SignalServerCommunicator, _room_code) -> void:
+	signaling = _signaling
+	room_code = _room_code
 	add_child(signaling)
 	signaling.message_received.connect(_on_signaling_msg)
 
 	multi_peer = WebRTCMultiplayerPeer.new()
-
 	# Send the join request; server will reply with our peer_id
 	var req = JoinRequest.new(room_code)
 	signaling.send(JsonCC.class_to_json_string(req))
