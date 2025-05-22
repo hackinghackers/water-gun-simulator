@@ -22,12 +22,18 @@ class JoinRequest(SignalEvent):
     # fixed fields for a join request
     event_name: str = field(default="join", init=False)
     from_pid: int = field(default=-1, init=False)
-    to_pid: int = field(default=-1, init=False)
+    to_pid: int = field(default=-1, init=False) # init false because it come from the client
 
 @dataclass_json
 @dataclass
 class JoinResponse(SignalEvent):
     event_name: str = field(default="join_response", init=False)
+
+@dataclass_json
+@dataclass
+class PeerJoined(SignalEvent):
+    joined_pid : int 
+    event_name: str = field(default="peer_joined", init=False)
 
 @dataclass_json
 @dataclass

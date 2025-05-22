@@ -49,6 +49,18 @@ class JoinResponse extends SignalEvent:
 			   _room_code: String = '') -> void:
 		super._init("join_response", _from_pid, _to_pid, _room_code)
 
+# 
+# Server will broadcast this event when a new peer joins.
+# 
+class PeerJoinedEvent extends SignalEvent:
+	@export var joined_pid : int
+	func _init(_from_pid: int = -1,
+			   _to_pid: int = -1, 
+			   _room_code: String = '', 
+			   _joined_pid: int = -1) -> void:
+		super._init("peer_joined", _from_pid, _to_pid, _room_code)
+		joined_pid = _joined_pid
+
 #
 # SDP offer/answer event.
 #
@@ -111,18 +123,22 @@ func _on_signaling_msg(raw: String) -> void:
 	if ev == null:
 		return
 
-	# 1) Handle JoinResponse to get our own peer_id
+	if ev.event_name == "peer_joined":
+		# ev.from_pid is the ID of the peer that just joined
+		# ev.to_pid is our assigned ID
+		var peer_joined = ev as PeerJoinedEvent
+		_ensure_connection(peer_joined.joined_pid)
+		return
+
 	if ev.event_name == "join_response":
 		# ev.to_pid is our assigned ID
 		own_peer_id = ev.to_pid
 		multi_peer.create_mesh(own_peer_id)
 		return
 
-	# 2) Until we know own_peer_id, ignore SDP/ICE
 	if own_peer_id < 0:
 		return
 
-	# 3) Only process messages addressed to us
 	if ev.to_pid != own_peer_id:
 		return
 
@@ -139,6 +155,8 @@ func _parse_event(d: Dictionary) -> SignalEvent:
 	match d.get("event_name", ""):
 		"join_response":
 			return JsonCC.json_to_class(JoinResponse, d)
+		"peer_joined":
+			return JsonCC.json_to_class(PeerJoinedEvent, d)
 		"sdp":
 			return JsonCC.json_to_class(SdpEvent, d)
 		"ice":
@@ -155,14 +173,15 @@ func _ensure_connection(from_pid: int) -> WebRTCPeerConnection:
 	if connections.has(from_pid):
 		return connections[from_pid]
 
-	var pc  = WebRTCPeerConnection.new()
-	add_child(pc)
+	var pc = WebRTCPeerConnection.new()
+	# add_child(pc)
 
 	# Bind peer_id (remote) so our handlers know the target directly
 	pc.session_description_created.connect(_on_local_session.bind(from_pid))
 	pc.ice_candidate_created.connect(_on_local_ice.bind(from_pid))
 
 	connections[from_pid] = pc
+	assert(pc.get_connection_state() == WebRTCPeerConnection.ConnectionState.STATE_NEW)
 	multi_peer.add_peer(pc, from_pid)
 
 	# Let the lower-ID peer initiate the offer
@@ -177,8 +196,6 @@ func _ensure_connection(from_pid: int) -> WebRTCPeerConnection:
 func _handle_sdp(ev: SdpEvent) -> void:
 	var pc = _ensure_connection(ev.from_pid)
 	pc.set_remote_description(ev.sdp_type, ev.sdp_content)
-	if ev.sdp_type == "offer":
-		pc.create_answer()
 
 #
 # Handle incoming ICE from `ev.from_pid`
@@ -206,5 +223,6 @@ func _on_local_ice(media: String, index: int, name: String, peer_id: int) -> voi
 # Poll all connections each frame to drive WebRTC.
 #
 func _process(delta: float) -> void:
+	multi_peer.poll()
 	for pc in connections.values():
 		pc.poll()

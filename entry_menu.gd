@@ -9,7 +9,7 @@ var default_map = preload("res://addons/Map/TemplateMapScene.tscn").instantiate(
 const PlayerType := preload("res://addons/PlayerCharacter/PlayerCharacterScene.tscn") 
 var webRTCCon : WebRTCConStarter
 var ip_addr : String = 'localhost'
-var room_code : String = 'room'
+var room_code : String = 'test_room'
 var port : int = 1145
 
 # Called when the node enters the scene tree for the first time.

@@ -37,6 +37,7 @@ func _process(delta: float) -> void:
 		while socket.get_available_packet_count() > 0:
 			var pkt : PackedByteArray = socket.get_packet()
 			var msg : String = pkt.get_string_from_utf8()
+			print("Received message: %s" % msg)
 			message_received.emit(msg)
 
 	elif state == WebSocketPeer.STATE_CLOSING:
@@ -51,6 +52,7 @@ func _process(delta: float) -> void:
 
 func send(msg: String) -> void:
 	# Send text only when the connection is open
+	print("Sending message: %s" % msg)
 	if socket.get_ready_state() == WebSocketPeer.STATE_OPEN:
 		socket.send_text(msg)
 	else:

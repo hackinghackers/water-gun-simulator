@@ -7,6 +7,7 @@ from events import (
     JoinResponse,
     SdpEvent,
     IceEvent,
+    PeerJoined,
 )
 
 from dataclasses import dataclass, field
@@ -15,10 +16,9 @@ from dataclasses import dataclass, field
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global logger
-    logger = logging.getLogger("uvicorn.access")
-    logger.handlers.clear()
+    logger = logging.getLogger("uvicorn.error")
+    # logger.handlers.clear()
     handler = logging.StreamHandler()
-    # handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
     logger.addHandler(handler)
     logger.info("Server startup complete — logging configured")
     yield
@@ -61,8 +61,22 @@ async def signaling(ws: WebSocket, room_code: str):
         to_pid=my_pid,
         room_code=room_code,
     )
+
     await ws.send_text(join_resp.to_json())
     logger.info(f"Client {my_pid} joined room {room_code}")
+
+    logger.info("Broadcasting new peer joined")
+    for i, s in room.sockets.items():
+        if s == ws : continue
+        pev = PeerJoined(
+            from_pid = 0,
+            to_pid = i,
+            room_code = room_code,
+            joined_pid = my_pid,
+        )
+        await s.send_text(pev.to_json())
+        logger.info(f"Notified {i}")
+
     try:
         # 4) Main loop: receive any event and route it
         while True:
@@ -85,4 +99,4 @@ async def signaling(ws: WebSocket, room_code: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host='localhost', port=1145, lifespan='on', ws='wsproto')
+    uvicorn.run(app, host='localhost', port=1145, lifespan='on', ws='websockets')
