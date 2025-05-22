@@ -9,6 +9,7 @@ var signaling: SignalServerCommunicator
 var multi_peer: WebRTCMultiplayerPeer
 var connections: Dictionary = {}
 var own_peer_id: int = -1
+signal multi_peer_connecting 
 
 #
 # Base for all signaling events.
@@ -226,3 +227,7 @@ func _process(delta: float) -> void:
 	multi_peer.poll()
 	for pc in connections.values():
 		pc.poll()
+
+	if multi_peer.get_connection_status() == WebRTCMultiplayerPeer.CONNECTION_CONNECTED or \
+	   multi_peer.get_connection_status() == WebRTCMultiplayerPeer.CONNECTION_CONNECTING:
+		multi_peer_connecting.emit()

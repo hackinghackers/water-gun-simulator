@@ -30,8 +30,10 @@ func _on_join_button_pressed() -> void:
 	print("connecting to websocket: " + url)
 	var signaling : SignalServerCommunicator = WebSocketSignalServerCommunicator.new(url, room_code)
 	webRTCCon = await WebRTCConStarter.new(signaling, room_code)
-	# multiplayer.multiplayer_peer = webRTCCon.multi_peer
 	add_child(webRTCCon)
+	await webRTCCon.multi_peer_connecting
+	multiplayer.multiplayer_peer = webRTCCon.multi_peer
+	print("multiplayer_peer_set")
 
 func _on_ip_entry_text_submitted(new_text: String) -> void:
 	ip_addr = new_text
