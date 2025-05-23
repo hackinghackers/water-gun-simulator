@@ -1,16 +1,17 @@
 extends Node
 
-@onready var connection_menu = $"CanvasLayer/ConnectionMenu"
-@onready var ip_entry = $"CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer/IpEntry"
-@onready var port_entry = $"CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer/PortEntry"
-@onready var room_code_entry = $"CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer/RoomCodeEntry"
-@onready var join_button = $"CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer/JoinButton"
-var default_map = preload("res://addons/Map/TemplateMapScene.tscn").instantiate()
+@onready var connection_menu := $"CanvasLayer/ConnectionMenu"
+@onready var ip_entry := $"CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer/IpEntry"
+@onready var port_entry := $"CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer/PortEntry"
+@onready var room_code_entry := $"CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer/RoomCodeEntry"
+@onready var join_button := $"CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer/JoinButton"
+var default_map := preload("res://addons/Map/TemplateMapScene.tscn").instantiate()
 const PlayerType := preload("res://addons/PlayerCharacter/PlayerCharacterScene.tscn") 
 var webRTCCon : WebRTCConStarter
-var ip_addr : String = 'localhost'
-var room_code : String = 'test_room'
-var port : int = 1145
+var ip_addr := 'localhost'
+var room_code := 'test_room'
+var port := 1145
+var ls := LogStream.new("entry_menu")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -25,15 +26,18 @@ func _process(delta: float) -> void:
 func _on_join_button_pressed() -> void:
 	#ip_addr = ip_entry.text
 	#room_code = room_code_entry.text
-
 	var url : String = "ws://%s:%d/ws" % [ip_addr, port]
-	print("connecting to websocket: " + url)
+	ls.info("connecting to websocket: " + url)
+	ls.info("room_code: " + room_code)
 	var signaling : SignalServerCommunicator = WebSocketSignalServerCommunicator.new(url, room_code)
 	webRTCCon = await WebRTCConStarter.new(signaling, room_code)
 	add_child(webRTCCon)
 	await webRTCCon.multi_peer_connecting
 	multiplayer.multiplayer_peer = webRTCCon.multi_peer
-	print("multiplayer_peer_set")
+	ls.info("multiplayer_peer_set")
+	connection_menu.hide()
+	# turn on the default map
+	get_tree().root.add_child(default_map)
 
 func _on_ip_entry_text_submitted(new_text: String) -> void:
 	ip_addr = new_text

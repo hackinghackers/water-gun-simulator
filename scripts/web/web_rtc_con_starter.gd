@@ -9,6 +9,7 @@ var signaling: SignalServerCommunicator
 var multi_peer: WebRTCMultiplayerPeer
 var connections: Dictionary = {}
 var own_peer_id: int = -1
+var ls := LogStream.new("webrtc_con_starter")
 signal multi_peer_connecting 
 
 #
@@ -116,7 +117,7 @@ func _init(_signaling : SignalServerCommunicator, _room_code) -> void:
 func _on_signaling_msg(raw: String) -> void:
 	var json = JSON.new()
 	if json.parse(raw) != OK:
-		push_error("Invalid JSON from signaling: " + raw)
+		ls.error("Invalid JSON from signaling: " + raw)
 		return
 
 	var d  = json.data as Dictionary
@@ -128,12 +129,14 @@ func _on_signaling_msg(raw: String) -> void:
 		# ev.from_pid is the ID of the peer that just joined
 		# ev.to_pid is our assigned ID
 		var peer_joined = ev as PeerJoinedEvent
+		ls.info("Peer joined: %d" % peer_joined.joined_pid)
 		_ensure_connection(peer_joined.joined_pid)
 		return
 
 	if ev.event_name == "join_response":
 		# ev.to_pid is our assigned ID
 		own_peer_id = ev.to_pid
+		ls.info("Join response: %d" % own_peer_id)
 		multi_peer.create_mesh(own_peer_id)
 		return
 
@@ -145,8 +148,10 @@ func _on_signaling_msg(raw: String) -> void:
 
 	match ev.event_name:
 		"sdp":
+			ls.info("SDP from %d" % ev.from_pid)
 			_handle_sdp(ev as SdpEvent)
 		"ice":
+			ls.info("ICE from %d" % ev.from_pid)
 			_handle_ice(ev as IceEvent)
 
 #
@@ -163,7 +168,7 @@ func _parse_event(d: Dictionary) -> SignalEvent:
 		"ice":
 			return JsonCC.json_to_class(IceEvent, d)
 		_:
-			push_error("Unknown event type: " + str(d))
+			ls.error("Unknown event type: " + str(d))
 			return null
 
 #
@@ -183,6 +188,7 @@ func _ensure_connection(from_pid: int) -> WebRTCPeerConnection:
 
 	connections[from_pid] = pc
 	assert(pc.get_connection_state() == WebRTCPeerConnection.ConnectionState.STATE_NEW)
+	
 	multi_peer.add_peer(pc, from_pid)
 
 	# Let the lower-ID peer initiate the offer
@@ -195,7 +201,7 @@ func _ensure_connection(from_pid: int) -> WebRTCPeerConnection:
 # Handle incoming SDP from `ev.from_pid`
 #
 func _handle_sdp(ev: SdpEvent) -> void:
-	var pc = _ensure_connection(ev.from_pid)
+	var pc := _ensure_connection(ev.from_pid)
 	pc.set_remote_description(ev.sdp_type, ev.sdp_content)
 
 #

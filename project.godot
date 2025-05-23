@@ -15,8 +15,14 @@ run/main_scene="uid://s5pobunw80jf"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+Log="*res://addons/logger/logger.gd"
+
 [debug]
 
+file_logging/enable_file_logging=true
+file_logging/max_log_files=10
 gdscript/warnings/untyped_declaration=1
 
 [dotnet]
@@ -25,7 +31,7 @@ project/assembly_name="Water Gun Simulator"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/repl/plugin.cfg")
+enabled=PackedStringArray("res://addons/logger/plugin.cfg", "res://addons/repl/plugin.cfg")
 
 [input]
 
