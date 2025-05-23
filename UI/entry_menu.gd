@@ -5,13 +5,13 @@ extends Node
 @onready var port_entry := $"CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer/PortEntry"
 @onready var room_code_entry := $"CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer/RoomCodeEntry"
 @onready var join_button := $"CanvasLayer/ConnectionMenu/MarginContainer/VBoxContainer/JoinButton"
-var default_map := preload("res://addons/Map/TemplateMapScene.tscn").instantiate()
-const PlayerType := preload("res://addons/PlayerCharacter/PlayerCharacterScene.tscn") 
+var map_manager := MapManager.new("TestMap")
 var webRTCCon : WebRTCConStarter
 var ip_addr := 'localhost'
 var room_code := 'test_room'
 var port := 1145
 var ls := LogStream.new("entry_menu")
+var game_main : GameMain
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -34,10 +34,10 @@ func _on_join_button_pressed() -> void:
 	add_child(webRTCCon)
 	await webRTCCon.multi_peer_connecting
 	multiplayer.multiplayer_peer = webRTCCon.multi_peer
-	ls.info("multiplayer_peer_set")
+	ls.info("multiplayer_peer set")
 	connection_menu.hide()
-	# turn on the default map
-	get_tree().root.add_child(default_map)
+	game_main = GameMain.new(webRTCCon.multi_peer, map_manager)
+	add_child(game_main)
 
 func _on_ip_entry_text_submitted(new_text: String) -> void:
 	ip_addr = new_text

@@ -1,5 +1,4 @@
-extends SignalServerCommunicator
-class_name WebSocketSignalServerCommunicator
+class_name WebSocketSignalServerCommunicator extends SignalServerCommunicator
 
 var server_url: String
 var room_code: String 

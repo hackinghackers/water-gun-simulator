@@ -1,6 +1,5 @@
 class_name WebRTCConStarter extends Node
 
-# Preload the JsonClassConverter addon
 const JsonCC = preload("res://addons/JsonClassConverter/JsonClassConverter.gd")
 
 var room_code: String

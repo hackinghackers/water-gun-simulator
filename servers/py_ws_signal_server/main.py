@@ -1,6 +1,7 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from contextlib import asynccontextmanager
 import logging
+from room import GameRoom, GameRoomCfg
 from events import (
     SignalEvent,
     JoinRequest,
@@ -10,7 +11,6 @@ from events import (
     PeerJoined,
 )
 
-from dataclasses import dataclass, field
 
 
 @asynccontextmanager
@@ -24,20 +24,6 @@ async def lifespan(app: FastAPI):
     yield
     logger.info("Server shutdown complete")
 
-
-@dataclass
-class GameRoom: 
-    code : str
-    next_pid : int = 1 
-    sockets : dict[int, WebSocket] = field(default_factory=dict)
-
-    def get_client(self, pid : int) -> WebSocket:
-        return self.sockets[pid]
-    
-    def add_client(self, socket : WebSocket) -> int:
-        self.sockets[self.next_pid] = socket
-        self.next_pid += 1
-        return self.next_pid - 1
 
 app = FastAPI(lifespan=lifespan)
 rooms : dict[str, GameRoom] = {}
