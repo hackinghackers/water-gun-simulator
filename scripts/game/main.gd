@@ -1,5 +1,5 @@
 class_name GameMain extends Node
-const PlayerType := preload("res://PlayerCharacter/PlayerCharacterScene.tscn")
+const PlayerScene := preload("res://PlayerCharacter/PlayerCharacterScene.tscn")
 var ls := LogStream.new("game_main")
 var multiplayer_peer : MultiplayerPeer
 var map_manager : MapManager
@@ -21,7 +21,7 @@ func _ready() -> void:
 
 func add_player(player_id : int) -> void: 
 	print_stack()
-	var player := PlayerType.instantiate()
+	var player := PlayerScene.instantiate()
 	player.name = str(player_id)
 	player.set_multiplayer_authority(player_id)
 	player_dict[player_id] = player
@@ -29,7 +29,7 @@ func add_player(player_id : int) -> void:
 	player.position = spawn_pt
 	ls.info("Adding player with ID: %d at " % player_id, spawn_pt)
 	add_child(player)
-	ls.info("This instance's authority on the new player[id=%d]" % player_id, player.is_multiplayer_authority())	
+	ls.info("This instance's authority on the new player[id=%d] is" % player_id, player.is_multiplayer_authority())	
 
 func remove_player(player_id : int) -> void:
 	ls.info("Removing player with ID: %d" % player_id)
