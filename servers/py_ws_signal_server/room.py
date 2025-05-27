@@ -12,7 +12,7 @@ class GameRoomCfg(DataClassJsonMixin):
 @dataclass
 class GameRoom:
     code: str
-    next_pid: int = 1
+    next_pid: int = 2 # in godot, pid=1 is reserved for the server
     sockets: dict[int, WebSocket] = field(default_factory=dict)
 
     def get_client(self, pid: int) -> WebSocket:

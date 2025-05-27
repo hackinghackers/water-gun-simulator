@@ -7,6 +7,7 @@ var currStateName  : String
 var states : Dictionary = {}
 
 @onready var charRef : CharacterBody3D = $".."
+var ls = LogStream.new("StateMachine")
 
 func _ready():
 	#get all the state childrens

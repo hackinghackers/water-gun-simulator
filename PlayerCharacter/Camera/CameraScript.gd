@@ -48,9 +48,10 @@ var mouseFree : bool = false
 @onready var playChar : PlayerCharacter = $".."
 @onready var hud : CanvasLayer = $"../HUD"
 
+var ls = LogStream.new("CameraObject")
+
 func _ready():
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED) #set mouse mode as captured
-	
+	camera.current = is_multiplayer_authority()
 	camera.fov = startFOV
 	
 func _unhandled_input(event):

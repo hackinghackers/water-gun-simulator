@@ -7,6 +7,7 @@ class_name HUD
 @onready var desiredMoveSpeedLT = $PlayCharInfos/VBoxContainer2/DesiredMoveSpeedLabelText
 @onready var velocityLT = $PlayCharInfos/VBoxContainer2/VelocityLabelText
 @onready var nbJumpsInAirAllowedLT = $PlayCharInfos/VBoxContainer2/NbJumpsInAirAllowedLabelText
+@onready var authorityLT = $PlayCharInfos/VBoxContainer2/AuthorityLabelText
 @onready var framesPerSecondLT = $PlayCharInfos2/VBoxContainer2/FramesPerSecondLabelText
 
 func _process(_delta):
@@ -27,7 +28,8 @@ func displayNbJumpsInAirAllowed(nbJumpsInAirAllowed : int):
 func displayCurrentFPS():
 	framesPerSecondLT.set_text(str(Engine.get_frames_per_second()))
 	
-	
+func displayAuthority():
+	authorityLT.set_text(str(get_multiplayer_authority()))
 	
 	
 	

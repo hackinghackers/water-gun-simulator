@@ -83,6 +83,8 @@ var coyoteJumpOn : bool = false
 @onready var floorCheck : RayCast3D = $Raycasts/FloorCheck
 
 func _ready():
+	set_process_input(is_multiplayer_authority())
+	set_process(is_multiplayer_authority())
 	#set move variables, and value references
 	moveSpeed = walkSpeed
 	moveAccel = walkAccel
@@ -103,11 +105,12 @@ func _physics_process(_delta : float):
 	
 func displayProperties():
 	#display properties on the hud
-	if hud != null:
+	if hud != null and is_multiplayer_authority():
 		hud.displayCurrentState(stateMachine.currStateName)
 		hud.displayDesiredMoveSpeed(desiredMoveSpeed)
 		hud.displayVelocity(velocity.length())
 		hud.displayNbJumpsInAirAllowed(nbJumpsInAirAllowed)
+		hud.displayAuthority()
 		
 func modifyPhysicsProperties():
 	lastFramePosition = position #get play char position every frame

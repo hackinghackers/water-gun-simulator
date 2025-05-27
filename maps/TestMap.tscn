@@ -1,7 +1,24 @@
 [gd_scene load_steps=6 format=3 uid="uid://oj3blpxqf1bl"]
 
-[ext_resource type="PackedScene" uid="uid://bwggrf7sbmkcv" path="res://PlayerCharacter/PlayerCharacterScene.tscn" id="2_15glb"]
 [ext_resource type="Material" uid="uid://cmlreoo2qwhp4" path="res://addons/Arts/StructureMaterial.tres" id="3_vd2n0"]
+
+[sub_resource type="GDScript" id="GDScript_ox0si"]
+script/source = "extends Node3D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+
+
+func _on_multiplayer_spawner_spawned(node: Node) -> void:
+	print(\"_on_multiplayer_spawner_spawned called in TestMap\")
+"
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_fjbi6"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -17,6 +34,7 @@ tonemap_mode = 2
 glow_enabled = true
 
 [node name="TestMap" type="Node3D"]
+script = SubResource("GDScript_ox0si")
 
 [node name="Environment" type="Node3D" parent="."]
 
@@ -26,9 +44,6 @@ environment = SubResource("Environment_pyxgo")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment"]
 transform = Transform3D(-0.866024, -0.433016, 0.250001, 0, 0.499998, 0.866026, -0.500003, 0.749999, -0.43301, -22, 101, 4)
 shadow_enabled = true
-
-[node name="PlayerCharacter" parent="." instance=ExtResource("2_15glb")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.7646, 1.50542, -19.959)
 
 [node name="Map" type="Node3D" parent="."]
 
@@ -120,6 +135,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.1715, 3.40175, 15.4378)
 
 [node name="pt2" type="Node3D" parent="Map/SpawnPts"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.1715, 3.40175, -41.2892)
-
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
-spawn_path = NodePath("..")

@@ -5,10 +5,11 @@ var map_path : String
 var map_scene : PackedScene
 var map_inst : Node3D
 var spawn_pts_node : Node
-var ls := LogStream.new("map (%s)" % map_name)
+var ls : LogStream
 
 func _init(_map_name : String) -> void:
 	map_name = _map_name
+	ls = LogStream.new("map_manager (%s)" % map_name)
 
 func get_rand_spawn_pt() -> Vector3:
 	var rand_index := int(randf_range(0, spawn_pts.size() - 1))
@@ -31,6 +32,7 @@ func _ready() -> void:
 		var _child := child as Node3D
 		spawn_pts.append(_child.position)
 
+	add_child(map_inst)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass

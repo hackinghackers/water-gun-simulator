@@ -50,6 +50,9 @@ properties/0/replication_mode = 1
 properties/1/path = NodePath(".:position")
 properties/1/spawn = true
 properties/1/replication_mode = 1
+properties/2/path = NodePath("CameraHolder/Camera:rotation")
+properties/2/spawn = true
+properties/2/replication_mode = 1
 
 [node name="PlayerCharacter" type="CharacterBody3D" groups=["PlayerCharacter"]]
 collision_layer = 2
@@ -222,6 +225,14 @@ text = "Nb jumps in air allowed :"
 label_settings = SubResource("LabelSettings_4e1aq")
 vertical_alignment = 1
 
+[node name="AuthorityLabel" type="Label" parent="HUD/PlayCharInfos/VBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Multiplayer Authority:"
+label_settings = SubResource("LabelSettings_4e1aq")
+vertical_alignment = 1
+
 [node name="VBoxContainer2" type="VBoxContainer" parent="HUD/PlayCharInfos"]
 layout_mode = 2
 
@@ -250,6 +261,14 @@ label_settings = SubResource("LabelSettings_3aho1")
 vertical_alignment = 1
 
 [node name="NbJumpsInAirAllowedLabelText" type="Label" parent="HUD/PlayCharInfos/VBoxContainer2"]
+texture_filter = 1
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "..................."
+label_settings = SubResource("LabelSettings_3aho1")
+vertical_alignment = 1
+
+[node name="AuthorityLabelText" type="Label" parent="HUD/PlayCharInfos/VBoxContainer2"]
 texture_filter = 1
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
