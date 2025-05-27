@@ -85,6 +85,7 @@ var coyoteJumpOn : bool = false
 func _ready():
 	set_process_input(is_multiplayer_authority())
 	set_process(is_multiplayer_authority())
+	set_physics_process(is_multiplayer_authority())
 	#set move variables, and value references
 	moveSpeed = walkSpeed
 	moveAccel = walkAccel
